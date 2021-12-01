@@ -1,0 +1,40 @@
+---
+title: "AOC 2021 - Day 1"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Submarines Problem
+
+### Part 1
+
+How many measurements are larger than the previous measurement?
+
+```{r}
+
+library(here)
+
+input_file <- here("data/day-1-sonar.txt")
+raw_sonar <- as.numeric(readLines(input_file))
+
+delta_depth <- c(NA, diff(raw_sonar))
+
+sum(delta_depth > 0, na.rm = TRUE)
+
+```
+
+### Part 2
+
+Consider sums of a three-measurement sliding window. How many sums are larger than the previous sum?
+
+```{r}
+
+window_sonar <- raw_sonar[1:(length(raw_sonar)-2)] + raw_sonar[2:(length(raw_sonar)-1)] + raw_sonar[3:(length(raw_sonar))]
+
+delta_window_sonar <- c(NA, diff(window_sonar))
+
+sum(delta_window_sonar > 0, na.rm = TRUE)
+
+
+```
