@@ -1,0 +1,61 @@
+---
+title: "AOC 2021 - Day 2"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Submarines Piloting Problem
+
+### Part 1
+
+Calculate the horizontal position and depth you would have after following the planned course. What do you get if you multiply your final horizontal position by your final depth?
+
+```{r}
+
+library(here)
+
+input_file <- here("data/day-2-movement.txt")
+raw_path <- read.table(input_file,header = FALSE,sep = " ",col.names = c("Movement","Amount"))
+
+submarine_position <- c(horizontal = 0, depth = 0)
+
+for(move in seq_len(nrow(raw_path))){
+  movement <- raw_path[move,]
+  if(movement[1] == "forward"){
+    submarine_position["horizontal"] <- submarine_position["horizontal"] + movement[2]
+  }else if(movement[1] == "down"){
+    submarine_position["depth"] <- submarine_position["depth"] + movement[2]
+  }else if(movement[1] == "up"){
+    submarine_position["depth"] <- submarine_position["depth"] - movement[2]
+  }
+}
+
+submarine_position[[1]] * submarine_position[[2]]
+
+```
+
+### Part 2
+
+Using this new interpretation of the commands, calculate the horizontal position and depth you would have after following the planned course. What do you get if you multiply your final horizontal position by your final depth?
+
+```{r}
+
+submarine_position_aim <- c(horizontal = 0, depth = 0, aim = 0)
+
+for(move in seq_len(nrow(raw_path))){
+  movement <- raw_path[move,]
+  if(movement[1] == "forward"){
+    submarine_position_aim["horizontal"] <- submarine_position_aim["horizontal"] + movement[2]
+    submarine_position_aim["depth"] <- submarine_position_aim["depth"] + (submarine_position_aim["aim"] * movement[2])
+
+  }else if(movement[1] == "down"){
+    submarine_position_aim["aim"] <- submarine_position_aim["aim"] + movement[2]
+  }else if(movement[1] == "up"){
+    submarine_position_aim["aim"] <- submarine_position_aim["aim"] - movement[2]
+  }
+}
+
+submarine_position_aim[[1]] * submarine_position_aim[[2]]
+
+```
