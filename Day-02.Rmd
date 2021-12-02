@@ -59,3 +59,4 @@ for(move in seq_len(nrow(raw_path))){
 submarine_position_aim[[1]] * submarine_position_aim[[2]]
 
 ```
+
