@@ -1,0 +1,75 @@
+---
+title: "AOC 2021 - Day 2"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Submarines Diagnostics Problem
+
+### Part 1
+
+Use the binary numbers in your diagnostic report to calculate the gamma rate and epsilon rate, then multiply them together. What is the power consumption of the submarine? (Be sure to represent your answer in decimal, not binary.)
+
+```{r}
+
+library(here)
+
+input_file <- here("data/day-3-diagnostic.txt")
+raw_diagnostic <- readLines(input_file)
+
+diagnostic_matrix <- matrix(as.numeric(do.call('c',strsplit(raw_diagnostic,""))),nrow = length(raw_diagnostic), byrow = TRUE)
+
+gamma_binary <- as.numeric(colSums(diagnostic_matrix) > nrow(diagnostic_matrix)/2)
+epsilon_binary <- as.numeric(!gamma_binary)
+
+gamma_numeric <- strtoi(paste0(gamma_binary,collapse = ""),base = 2)
+epsilon_numeric <- strtoi(paste0(epsilon_binary,collapse = ""),base = 2)
+
+
+power <- gamma_numeric * epsilon_numeric
+
+power
+
+```
+
+### Part 2
+
+Use the binary numbers in your diagnostic report to calculate the oxygen generator rating and CO2 scrubber rating, then multiply them together. What is the life support rating of the submarine? (Be sure to represent your answer in decimal, not binary.)
+
+```{r}
+
+life_support_idx <- co2_scrubber_idx <- seq_len(nrow(diagnostic_matrix))
+
+## life support filter
+for(bit_loc in seq_len(ncol(diagnostic_matrix))){
+  bits <- diagnostic_matrix[life_support_idx, bit_loc]
+  keep_bit <- as.numeric(sum(bits) >= (length(bits)/2))
+  keep_idx <- which(bits==keep_bit)
+  life_support_idx <- life_support_idx[keep_idx]
+  if(length(life_support_idx) == 1){
+    break
+  }
+}
+
+## CO2 scrubber filter
+for(bit_loc in seq_len(ncol(diagnostic_matrix))){
+  bits <- diagnostic_matrix[co2_scrubber_idx, bit_loc]
+  keep_bit <- as.numeric(!(sum(bits) >= (length(bits)/2)))
+  keep_idx <- which(bits==keep_bit)
+  co2_scrubber_idx <- co2_scrubber_idx[keep_idx]
+  if(length(co2_scrubber_idx) == 1){
+    break
+  }
+}
+
+life_support_binary <- diagnostic_matrix[life_support_idx,]
+co2_scrubber_binary <- diagnostic_matrix[co2_scrubber_idx,]
+
+life_support_numeric <- strtoi(paste0(life_support_binary,collapse = ""),base = 2)
+co2_scrubber_numeric <- strtoi(paste0(co2_scrubber_binary,collapse = ""),base = 2)
+
+life_support_numeric * co2_scrubber_numeric
+
+```
+
