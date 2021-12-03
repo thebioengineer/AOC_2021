@@ -9,4 +9,4 @@ However, as these get more difficult, I will not hold myself to that.
 
 [Day 1 - Sonar Sweep](solutions/Day-01.Rmd)
 [Day 2 - Dive!](solutions/Day-02.Rmd)
-[Day 2 - Binary Diagnostic](solutions/Day-03.Rmd)
+[Day 3 - Binary Diagnostic](solutions/Day-03.Rmd)
