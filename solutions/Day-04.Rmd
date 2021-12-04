@@ -1,0 +1,106 @@
+---
+title: "AOC 2021 - Day 4"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Giant Squid
+
+### Part 1
+
+To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?
+
+```{r}
+
+library(here)
+
+input_file <- here("data/day-4-bingo.txt")
+raw_bingo <- readLines(input_file)
+
+bingo_numbers <- as.numeric(strsplit(raw_bingo[1],",")[[1]])
+
+board_edges <- c(which(raw_bingo == ""),length(raw_bingo)+1)
+
+boards <- lapply(seq_len(length(board_edges)-1), function(board_idx){
+  raw_board <- raw_bingo[(board_edges[board_idx]+1):(board_edges[board_idx+1]-1)]
+  board_contents <- strsplit(trimws(raw_board),"\\s+")
+  matrix(as.numeric(do.call('c',board_contents)),ncol = 5,byrow = TRUE)
+})
+
+`%mat_in%` <- function(x, y){
+  res <- x %in% y
+  matrix(res, ncol = ncol(x), nrow = nrow(x), byrow = FALSE)
+}
+
+winning_board <- NULL
+winning_number <- NULL
+called_numbers <- NULL
+
+for(draw_num in seq_along(bingo_numbers)){
+  
+  drawn_numbers <- bingo_numbers[seq_len(draw_num)]
+  
+  board_win <- do.call('c',lapply(boards, function(board){
+    res <-  board %mat_in% drawn_numbers
+    any(rowSums(res) == 5) |
+      any(colSums(res) == 5)
+  }))
+  
+  if(any(board_win)){
+    winning_board <- boards[[which(board_win)]]
+    winning_number <- bingo_numbers[draw_num]
+    called_numbers <- drawn_numbers
+    break
+  }
+  
+}
+
+board_sum <- sum(winning_board[which(!winning_board %mat_in% called_numbers)])
+
+board_sum * winning_number
+
+
+```
+
+### Part 2
+
+Figure out which board will win last. Once it wins, what would its final score be?
+
+```{r}
+
+last_winning_board_number <- NULL
+last_winning_board <- NULL
+last_winning_number <- NULL
+last_called_numbers <- NULL
+
+for(draw_num in seq_along(bingo_numbers)){
+  
+  drawn_numbers <- bingo_numbers[seq_len(draw_num)]
+  
+  board_win <- do.call('c',lapply(boards, function(board){
+    res <-  board %mat_in% drawn_numbers
+    any(rowSums(res) == 5) |
+      any(colSums(res) == 5)
+  }))
+  
+  if(sum(board_win) == (length(boards)-1) & is.null(last_winning_board_number)){
+    last_winning_board_number <- which(!board_win)
+  }
+  ## break out once the last board wins
+  if(all(board_win)){
+    last_winning_board <- boards[[last_winning_board_number]]
+    last_winning_number <- bingo_numbers[draw_num]
+    last_called_numbers <- drawn_numbers
+    break
+  }
+  
+}
+
+last_board_sum <- sum(last_winning_board[which(!last_winning_board %mat_in% last_called_numbers)])
+
+last_board_sum * last_winning_number
+
+
+```
+
