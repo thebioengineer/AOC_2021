@@ -1,0 +1,124 @@
+---
+title: "AOC 2021 - Day 6"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Lanternfish
+
+```{r setup}
+
+library(here)
+
+input_file <- here("data/day-6-lanternfish.txt")
+lanternfish <- as.numeric(strsplit(readLines(input_file),",")[[1]])
+
+input_test_file <- here("data/day-6-lanternfish-test.txt")
+lanternfish_test <- as.numeric(strsplit(readLines(input_test_file),",")[[1]])
+
+iterate_day <- function(fish){
+  fish <- fish - 1
+  
+  if(any(fish< 0)){
+    new_fish <- rep(8,sum(fish < 0))
+    fish[fish < 0] <- 6
+    fish <- c(fish, new_fish)
+  }
+  
+  fish
+}
+
+iterate_day_table <- function(fish){
+  
+  names(fish) <- as.character(as.numeric(names(fish)) - 1)
+
+  if(any(names(fish) == "-1")){
+    new_fish <- c("8" = fish[["-1"]])
+    fish[["6"]] <- fish[["6"]] + fish[["-1"]]
+    fish <- fish[names(fish) %in% c(0:8)]
+    fish <- c(fish, new_fish)
+  }
+  
+  fish
+}
+
+```
+
+### Part 1
+
+Consider only horizontal and vertical lines. At how many points do at least two lines overlap?
+
+```{r test-part-1}
+
+fish <- lanternfish_test
+fish_table <- c(table(factor(fish,levels = 0:8)))
+
+for(day in seq_len(18)){
+  fish <- iterate_day(fish)
+  fish_table <- iterate_day_table(fish_table)
+}
+
+length(fish) == 26
+sum(fish_table) == 26
+
+
+fish <- lanternfish_test
+fish_table <- c(table(factor(fish,levels = 0:8)))
+
+for(day in seq_len(80)){
+  fish <- iterate_day(fish)
+  fish_table <- iterate_day_table(fish_table)
+}
+
+length(fish) == 5934
+sum(fish_table) == 5934
+
+
+```
+
+```{r part-1}
+
+fish <- lanternfish
+fish_table <- c(table(factor(fish,levels = 0:8)))
+
+for(day in seq_len(80)){
+  fish <- iterate_day(fish)
+  fish_table <- iterate_day_table(fish_table)
+}
+
+length(fish)
+sum(fish_table)
+
+
+```
+
+### Part 2
+
+Consider all of the lines. At how many points do at least two lines overlap?
+
+```{r test-part-2}
+
+fish <- lanternfish_test
+fish_table <- setNames(as.numeric(c(table(factor(fish,levels = 0:8)))), 0:8)
+
+for(day in seq_len(256)){
+  fish_table <- iterate_day_table(fish_table)
+}
+
+sum(fish_table) == 26984457539
+
+```
+
+```{r part-2}
+
+fish <- lanternfish
+fish_table <- setNames(as.numeric(c(table(factor(fish,levels = 0:8)))), 0:8)
+
+for(day in seq_len(256)){
+  fish_table <- iterate_day_table(fish_table)
+}
+
+as.character(sum(fish_table))
+
+```
