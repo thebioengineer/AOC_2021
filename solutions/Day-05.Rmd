@@ -1,0 +1,161 @@
+---
+title: "AOC 2021 - Day 5"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## Hydrothermal Venture
+
+```{r setup}
+
+library(here)
+
+input_file <- here("data/day-5-hydrothermal-vents.txt")
+raw_vents <- readLines(input_file)
+
+input_test_file <- here("data/day-5-hydrothermal-vents-test.txt")
+raw_vents_test <- readLines(input_test_file)
+
+as_vent <- function(raw_vent, envir){
+  vent_info <- strsplit(strsplit(raw_vent," -> ")[[1]],",")
+  
+  start <- as.numeric(vent_info[[1]])
+  end <- as.numeric(vent_info[[2]])
+  
+  vert <- start[[1]] == end[[1]]
+  horizontal <- start[[2]] == end[[2]]
+  diagonal <- abs(start[[1]] - end[[1]]) == abs(start[[2]] - end[[2]])
+  
+  envir$max_x <- max(c(envir$max_x, start[[1]], end[[1]]))
+  envir$max_y <- max(c(envir$max_y, start[[2]], end[[2]]))
+  
+  list(
+    start = start,
+    end = end, 
+    vert = vert,
+    horizontal = horizontal,
+    diagonal = diagonal
+  )
+}
+
+
+mat_dims_test <- environment()
+mat_dims_test$max_x <- 0
+mat_dims_test$max_y <- 0
+
+vents_test <- lapply(raw_vents_test, as_vent, mat_dims_test)
+
+mat_dims <- environment()
+mat_dims$max_x <- 0
+mat_dims$max_y <- 0
+
+vents <- lapply(raw_vents, as_vent, mat_dims)
+
+```
+
+### Part 1
+
+Consider only horizontal and vertical lines. At how many points do at least two lines overlap?
+
+```{r test-part-1}
+
+ocean_floor_test <- matrix(0, ncol = mat_dims_test$max_x + 1, nrow = mat_dims_test$max_y + 1)
+
+for(vent in vents_test){
+  if(vent$vert){
+    coords_x <- vent$start[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else if(vent$horizontal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]
+  }else{
+    next
+  }
+  vent_coords <- as.matrix(data.frame(y = coords_y +1, x = coords_x + 1 ))
+  ocean_floor_test[vent_coords] <- ocean_floor_test[vent_coords] + 1
+}
+
+sum(ocean_floor_test >= 2)
+
+
+```
+
+```{r part-1}
+
+ocean_floor <- matrix(0, ncol = mat_dims$max_x + 1, nrow = mat_dims$max_y + 1)
+
+for(vent in vents){
+  if(vent$vert){
+    coords_x <- vent$start[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else if(vent$horizontal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]
+  }else{
+    next
+  }
+  vent_coords <- as.matrix(data.frame(y = coords_y +1, x = coords_x + 1 ))
+  ocean_floor[vent_coords] <- ocean_floor[vent_coords] + 1
+}
+
+sum(ocean_floor > 1)
+
+
+```
+
+### Part 2
+
+Consider all of the lines. At how many points do at least two lines overlap?
+
+```{r test-part-2}
+
+ocean_floor_test <- matrix(0, ncol = mat_dims_test$max_x + 1, nrow = mat_dims_test$max_y + 1)
+
+for(vent in vents_test){
+  if(vent$vert){
+    coords_x <- vent$start[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else if(vent$horizontal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]
+  }else if(vent$diagonal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else{
+    next
+  }
+  vent_coords <- as.matrix(data.frame(y = coords_y +1, x = coords_x + 1 ))
+  ocean_floor_test[vent_coords] <- ocean_floor_test[vent_coords] + 1
+}
+
+sum(ocean_floor_test >= 2)
+
+
+```
+
+```{r part-1}
+
+ocean_floor <- matrix(0, ncol = mat_dims$max_x + 1, nrow = mat_dims$max_y + 1)
+
+for(vent in vents){
+  if(vent$vert){
+    coords_x <- vent$start[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else if(vent$horizontal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]
+  }else if(vent$diagonal){
+    coords_x <- vent$start[[1]]:vent$end[[1]]
+    coords_y <- vent$start[[2]]:vent$end[[2]]
+  }else{
+    next
+  }
+  vent_coords <- as.matrix(data.frame(y = coords_y +1, x = coords_x + 1 ))
+  ocean_floor[vent_coords] <- ocean_floor[vent_coords] + 1
+}
+
+sum(ocean_floor > 1)
+
+
+```
