@@ -77,13 +77,20 @@ min(gas_output) == 168
 
 ```{r part-2}
 
-fish <- lanternfish
-fish_table <- setNames(as.numeric(c(table(factor(fish,levels = 0:8)))), 0:8)
+crabs <- crab_subs
+potential_pos <- seq(min(crabs), max(crabs))
 
-for(day in seq_len(256)){
-  fish_table <- iterate_day_table(fish_table)
+gas_sum <- function(x){
+  sum(seq_len(x))
 }
 
-as.character(sum(fish_table))
+total_gas_used <- function(aim, crabs){
+  delta <- abs(crabs - aim)
+  sum(sapply(delta, gas_sum))
+}
+
+gas_output <- sapply(potential_pos,total_gas_used, crabs)
+
+min(gas_output)
 
 ```
