@@ -13,3 +13,4 @@ However, as these get more difficult, I will not hold myself to that.
 - [Day 4 - Giant Squid](solutions/Day-04.Rmd)
 - [Day 5 - Hydrothermal Venture](solutions/Day-05.Rmd)
 - [Day 6 - Lanternfish](solutions/Day-06.Rmd)
+- [Day 7 - The Treachery of Whales](solutions/Day-07.Rmd)

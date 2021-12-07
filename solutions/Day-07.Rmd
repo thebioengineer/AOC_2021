@@ -1,0 +1,89 @@
+---
+title: "AOC 2021 - Day 7"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+## The Treachery of Whales
+
+```{r setup}
+
+library(here)
+
+input_file <- here("data/day-7-whales.txt")
+crab_subs <- as.numeric(strsplit(readLines(input_file),",")[[1]])
+
+input_test_file <- here("data/day-7-whales-test.txt")
+crab_subs_test <- as.numeric(strsplit(readLines(input_test_file),",")[[1]])
+
+
+
+```
+
+### Part 1
+
+Consider only horizontal and vertical lines. At how many points do at least two lines overlap?
+
+```{r test-part-1}
+
+crabs <- crab_subs_test
+potential_pos <- seq(min(crabs), max(crabs))
+
+gas_used <- function(aim, crabs){
+  sum(abs(crabs - aim))
+}
+
+gas_output <- sapply(potential_pos,gas_used, crabs)
+
+min(gas_output) == 37
+
+```
+
+```{r part-1}
+
+crabs <- crab_subs
+potential_pos <- seq(min(crabs), max(crabs))
+
+gas_output <- sapply(potential_pos,gas_used, crabs)
+
+min(gas_output)
+
+```
+
+### Part 2
+
+Consider all of the lines. At how many points do at least two lines overlap?
+
+```{r test-part-2}
+
+crabs <- crab_subs_test
+potential_pos <- seq(min(crabs), max(crabs))
+
+gas_sum <- function(x){
+  sum(seq_len(x))
+}
+
+total_gas_used <- function(aim, crabs){
+  delta <- abs(crabs - aim)
+  sum(sapply(delta, gas_sum))
+}
+
+gas_output <- sapply(potential_pos,total_gas_used, crabs)
+
+min(gas_output) == 168
+
+```
+
+```{r part-2}
+
+fish <- lanternfish
+fish_table <- setNames(as.numeric(c(table(factor(fish,levels = 0:8)))), 0:8)
+
+for(day in seq_len(256)){
+  fish_table <- iterate_day_table(fish_table)
+}
+
+as.character(sum(fish_table))
+
+```
